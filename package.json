@@ -1,0 +1,18 @@
+{
+  "name": "mediflow-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MediFlow AI pharmacy inventory and operations",
+  "workspaces": ["client", "server"],
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "npm --workspace server run dev",
+    "dev:client": "npm --workspace client run dev",
+    "build": "npm --workspace server run build && npm --workspace client exec vite build -- --configLoader runner",
+    "test": "npm --workspace server test",
+    "db:generate": "npm --workspace server run db:generate",
+    "db:migrate": "npm --workspace server run db:migrate",
+    "db:seed": "npm --workspace server run db:seed"
+  },
+  "devDependencies": { "concurrently": "^9.1.2" }
+}

@@ -1,0 +1,33 @@
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
+import { createRequire } from 'node:module';
+import { rateLimit } from 'express-rate-limit';
+const pinoHttp = createRequire(import.meta.url)('pino-http') as (options: object) => express.RequestHandler;
+import { authRouter } from './modules/auth/routes.js';
+import { medicinesRouter } from './modules/medicines/routes.js';
+import { salesRouter } from './modules/sales/routes.js';
+import { inventoryRouter } from './modules/inventory/routes.js';
+import { purchasesRouter } from './modules/purchases/routes.js';
+import { suppliersRouter } from './modules/suppliers/routes.js';
+import { aiRouter } from './modules/ai/routes.js';
+import { reportsRouter } from './modules/reports/routes.js';
+
+export const app = express();
+app.disable('x-powered-by');
+app.use(helmet()); app.use(cors({ origin: process.env.CLIENT_ORIGIN ?? 'http://localhost:5173', credentials: true }));
+app.use(express.json({ limit: '1mb' })); app.use(cookieParser()); app.use(pinoHttp({ redact: ['req.headers.cookie','req.headers.authorization'] }));
+app.get('/api/v1/health', (_req,res)=>res.json({data:{status:'ok',service:'MediFlow API'}}));
+app.use('/api/v1/auth', rateLimit({windowMs:15*60*1000,limit:20,standardHeaders:true,legacyHeaders:false}),authRouter);
+app.use('/api/v1/medicines', medicinesRouter); app.use('/api/v1/sales', salesRouter);
+app.use('/api/v1/inventory', inventoryRouter);
+app.use('/api/v1/purchases', purchasesRouter); app.use('/api/v1/suppliers', suppliersRouter);
+app.use('/api/v1/ai',aiRouter);
+app.use('/api/v1/reports',reportsRouter);
+app.use((_req,res)=>res.status(404).json({error:{code:'NOT_FOUND',message:'The requested resource was not found'}}));
+app.use((error: unknown,_req:express.Request,res:express.Response,_next:express.NextFunction)=>{
+  const status=typeof error==='object'&&error!==null&&'status'in error?Number((error as {status:number}).status):500;
+  res.status(status).json({error:{code:status===500?'INTERNAL_ERROR':'REQUEST_FAILED',message:status===500?'An unexpected error occurred':(error as Error).message}});
+});

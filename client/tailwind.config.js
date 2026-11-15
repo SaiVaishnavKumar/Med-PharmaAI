@@ -1,0 +1,1 @@
+export default { content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'], theme: { extend: { colors: { navy: '#102a43', ink: '#243b53', muted: '#627d98', line: '#e5edf3', canvas: '#f5f8fb', brand: '#1677d2', mint: '#e5f7ef', amber: '#fff4dc' }, boxShadow: { card: '0 4px 18px rgba(16,42,67,.055)' }, borderRadius: { xl2: '1rem' } } }, plugins: [] };
