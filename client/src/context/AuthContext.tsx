@@ -13,11 +13,19 @@ interface AuthContextType {
   logout: () => void;
 }
 
+const AUTH_STORAGE_KEY = 'mediflow_auth_session';
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User>(() => pharmacyStore.currentUser || INITIAL_USERS[0]);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(AUTH_STORAGE_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     pharmacyStore.setCurrentUser(user);
@@ -36,10 +44,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const found = INITIAL_USERS.find((u) => u.id === userId);
     if (found) {
       setUser(found);
+      setIsAuthenticated(true);
+      try {
+        localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+      } catch {}
     }
   };
 
-  const login = async (email: string) => {
+  const login = async (email: string, _password?: string) => {
     const found = INITIAL_USERS.find((u) => u.email.toLowerCase() === email.toLowerCase()) || {
       id: `user-${Date.now()}`,
       name: email.split('@')[0],
@@ -50,10 +62,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     setUser(found);
     setIsAuthenticated(true);
+    try {
+      localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+    } catch {}
   };
 
   const logout = () => {
     setIsAuthenticated(false);
+    try {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+    } catch {}
   };
 
   return (
