@@ -1,6 +1,62 @@
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
-type Point={date:string;revenue:string;sales:number};
-export default function RevenueChart({data}:{data:Point[]}){
-  return <ResponsiveContainer width="100%" height="100%"><AreaChart data={data} margin={{top:14,right:12,left:0,bottom:0}}><defs><linearGradient id="revenueFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#2587cc" stopOpacity={.18}/><stop offset="95%" stopColor="#2587cc" stopOpacity={0}/></linearGradient></defs><CartesianGrid stroke="#edf2f5" strokeDasharray="3 4" vertical={false}/><XAxis dataKey="date" tickFormatter={v=>new Date(v).toLocaleDateString(undefined,{month:'short',day:'numeric'})} tickLine={false} axisLine={false} tick={{fontSize:9,fill:'#8c9dab'}}/><YAxis tickLine={false} axisLine={false} tick={{fontSize:9,fill:'#8c9dab'}} width={45}/><Tooltip formatter={v=>[`₹${v}`,'Net revenue']} labelFormatter={v=>new Date(String(v)).toLocaleDateString()}/><Area type="monotone" dataKey="revenue" stroke="#2381c4" strokeWidth={2} fill="url(#revenueFill)"/></AreaChart></ResponsiveContainer>;
+interface Point {
+  date: string;
+  revenue: string;
+  sales: number;
+}
+
+export default function RevenueChart({ data }: { data: Point[] }) {
+  return (
+    <ResponsiveContainer width="100%" height="100%">
+      <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <defs>
+          <linearGradient id="medRevenueGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#0f766e" stopOpacity={0.25} />
+            <stop offset="95%" stopColor="#0f766e" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid stroke="#f1f5f9" strokeDasharray="3 3" vertical={false} />
+        <XAxis
+          dataKey="date"
+          tickFormatter={(v) =>
+            new Date(v).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
+          }
+          tickLine={false}
+          axisLine={false}
+          tick={{ fontSize: 11, fill: '#94a3b8' }}
+        />
+        <YAxis
+          tickLine={false}
+          axisLine={false}
+          tick={{ fontSize: 11, fill: '#94a3b8' }}
+          tickFormatter={(v) => `₹${v}`}
+        />
+        <Tooltip
+          formatter={(v) => [`₹${v}`, 'Net Revenue']}
+          labelFormatter={(v) =>
+            new Date(String(v)).toLocaleDateString(undefined, {
+              weekday: 'short',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })
+          }
+          contentStyle={{
+            borderRadius: '0.75rem',
+            border: '1px solid #e2e8f0',
+            boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+            fontSize: '12px',
+          }}
+        />
+        <Area
+          type="monotone"
+          dataKey="revenue"
+          stroke="#0f766e"
+          strokeWidth={2.5}
+          fill="url(#medRevenueGrad)"
+        />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
 }
