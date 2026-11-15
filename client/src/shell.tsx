@@ -17,7 +17,8 @@ import { Login } from './pages/Login';
 import { AssessmentPage } from './pages/AssessmentPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) return <div className="min-h-screen grid place-items-center text-sm text-slate-500">Restoring your session…</div>;
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
@@ -25,7 +26,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading) return <div className="min-h-screen grid place-items-center text-sm text-slate-500">Restoring your session…</div>;
 
   return (
     <Routes>

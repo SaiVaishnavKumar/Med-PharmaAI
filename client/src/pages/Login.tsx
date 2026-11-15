@@ -29,8 +29,9 @@ export function Login() {
   };
 
   const handleQuickDemoLogin = (userId: string) => {
-    switchUser(userId);
-    navigate('/');
+    setBusy(true);
+    setError('');
+    void switchUser(userId).then(() => navigate('/')).catch((err) => setError(err instanceof Error ? err.message : 'Unable to sign in.')).finally(() => setBusy(false));
   };
 
   return (
@@ -54,7 +55,7 @@ export function Login() {
           <div>
             <h2 className="text-lg font-bold text-slate-800 font-display">Sign In to Workspace</h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Access your clinical pharmacy terminal and dispensing logs.
+              Sign in with a demo profile to access pharmacy operations.
             </p>
           </div>
 
@@ -123,6 +124,7 @@ export function Login() {
                   key={u.id}
                   type="button"
                   onClick={() => handleQuickDemoLogin(u.id)}
+                  disabled={busy}
                   className="p-2.5 rounded-lg border border-slate-200 hover:border-teal-500 hover:bg-teal-50/50 text-left transition-all flex items-center gap-2 group"
                 >
                   <div className="w-7 h-7 rounded-full bg-teal-100 text-teal-800 text-[11px] font-bold flex items-center justify-center flex-shrink-0 group-hover:bg-teal-700 group-hover:text-white transition-colors">
@@ -140,6 +142,8 @@ export function Login() {
               ))}
             </div>
           </div>
+
+          <p className="text-center text-[11px] text-slate-500">Demo password: <span className="font-semibold text-slate-700">DemoOnly!2026</span></p>
 
           <div className="pt-3 text-center flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
             <ShieldCheck className="w-3.5 h-3.5 text-teal-600" />

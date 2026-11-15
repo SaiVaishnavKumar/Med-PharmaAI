@@ -13,7 +13,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-manager',
     name: 'Dr. Sarah Jenkins',
-    email: 'manager@mediflow.local',
+    email: 'manager@mediflow.demo',
     role: 'PHARMACY_MANAGER',
     roles: ['PHARMACY_MANAGER', 'PHARMACIST'],
     avatar: 'SJ',
@@ -21,7 +21,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-admin',
     name: 'Administrator',
-    email: 'admin@mediflow.local',
+    email: 'admin@mediflow.demo',
     role: 'SUPER_ADMIN',
     roles: ['SUPER_ADMIN', 'PHARMACY_MANAGER', 'INVENTORY_MANAGER'],
     avatar: 'AD',
@@ -29,7 +29,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-pharmacist',
     name: 'Rahul Sharma (Pharm.D)',
-    email: 'rahul@mediflow.local',
+    email: 'pharmacist@mediflow.demo',
     role: 'PHARMACIST',
     roles: ['PHARMACIST'],
     avatar: 'RS',
@@ -37,7 +37,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-cashier',
     name: 'Priya Patel',
-    email: 'priya@mediflow.local',
+    email: 'cashier@mediflow.demo',
     role: 'CASHIER',
     roles: ['CASHIER'],
     avatar: 'PP',
@@ -45,7 +45,7 @@ export const INITIAL_USERS: User[] = [
   {
     id: 'user-inventory',
     name: 'Vikram Mehta',
-    email: 'vikram@mediflow.local',
+    email: 'inventory@mediflow.demo',
     role: 'INVENTORY_MANAGER',
     roles: ['INVENTORY_MANAGER'],
     avatar: 'VM',

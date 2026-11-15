@@ -8,9 +8,18 @@ const products=[
 ];
 async function main(){
  const hash=await bcrypt.hash('DemoOnly!2026',12);
- const user=await prisma.user.upsert({where:{email:'admin@mediflow.demo'},update:{},create:{name:'Demo Administrator',email:'admin@mediflow.demo',passwordHash:hash}});
- const role=await prisma.role.upsert({where:{name:RoleName.SUPER_ADMIN},update:{},create:{name:RoleName.SUPER_ADMIN}});
- await prisma.userRole.upsert({where:{userId_roleId:{userId:user.id,roleId:role.id}},update:{},create:{userId:user.id,roleId:role.id}});
+ const demoAccounts:[string,string,RoleName][]=[
+  ['admin@mediflow.demo','Administrator',RoleName.SUPER_ADMIN],
+  ['manager@mediflow.demo','Dr. Sarah Jenkins',RoleName.PHARMACY_MANAGER],
+  ['pharmacist@mediflow.demo','Rahul Sharma (Pharm.D)',RoleName.PHARMACIST],
+  ['cashier@mediflow.demo','Priya Patel',RoleName.CASHIER],
+  ['inventory@mediflow.demo','Vikram Mehta',RoleName.INVENTORY_MANAGER],
+ ];
+ for(const [email,name,roleName] of demoAccounts){
+  const user=await prisma.user.upsert({where:{email},update:{name,passwordHash:hash,isActive:true},create:{name,email,passwordHash:hash}});
+  const role=await prisma.role.upsert({where:{name:roleName},update:{},create:{name:roleName}});
+  await prisma.userRole.upsert({where:{userId_roleId:{userId:user.id,roleId:role.id}},update:{},create:{userId:user.id,roleId:role.id}});
+ }
  const categoryIds=new Map<string,string>();for(const name of categories){const c=await prisma.medicineCategory.upsert({where:{name},update:{},create:{name}});categoryIds.set(name,c.id);}
  const suppliers=[];for(let i=1;i<=5;i++)suppliers.push(await prisma.supplier.upsert({where:{id:`demo-supplier-${i}`},update:{},create:{id:`demo-supplier-${i}`,name:`Demo Supply House ${i}`,email:`orders${i}@supplier.demo`,phone:`+91 90000 0000${i}`,address:`${i} Market Road, Demo City`}}));
  for(let i=0;i<products.length;i++){const [name,genericName,sku,category,reorderLevel]=products[i] as [string,string,string,string,number];const medicine=await prisma.medicine.upsert({where:{sku},update:{},create:{name,genericName,sku,brand:'MediFlow Demo',unit:'pack',reorderLevel,categoryId:categoryIds.get(category)}});if(await prisma.medicineBatch.count({where:{medicineId:medicine.id}}))continue;const firstExpiry=new Date();firstExpiry.setDate(firstExpiry.getDate()+(i===0?12:i===1?-2:70+i*2));const laterExpiry=new Date();laterExpiry.setDate(laterExpiry.getDate()+400+i);const firstQty=i===2?3:20,secondQty=i===2?4:20;const seeded=await prisma.medicineBatch.createManyAndReturn({data:[{medicineId:medicine.id,supplierId:suppliers[i%5].id,batchNumber:`DEMO-${sku}-A`,expiryDate:firstExpiry,purchasePrice:45+i*2,sellingPrice:64+i*2,quantityReceived:firstQty,availableQuantity:firstQty},{medicineId:medicine.id,supplierId:suppliers[(i+1)%5].id,batchNumber:`DEMO-${sku}-B`,expiryDate:laterExpiry,purchasePrice:47+i*2,sellingPrice:66+i*2,quantityReceived:secondQty,availableQuantity:secondQty}]});await prisma.stockMovement.createMany({data:seeded.map(batch=>({medicineId:medicine.id,batchId:batch.id,type:'OPENING',quantity:batch.availableQuantity,referenceType:'DEMO_SEED',referenceId:batch.id,reason:'Fictional demo opening stock'}))});}

@@ -64,6 +64,18 @@ npm run dev
 - **Frontend Client**: `http://localhost:5173`
 - **Backend API**: `http://localhost:4000/api/v1`
 
+### Demo sign-in
+
+Use any profile shown on the sign-in screen with the password `DemoOnly!2026`.
+The seeded demo accounts are `admin@mediflow.demo`, `manager@mediflow.demo`,
+`pharmacist@mediflow.demo`, `cashier@mediflow.demo`, and
+`inventory@mediflow.demo`. These are fictional accounts for local demonstration.
+
+For database-backed sign-in, copy `.env.example` to `.env`, start PostgreSQL with
+`docker compose up -d`, then run `npm run db:generate`, `npm run db:migrate`, and
+`npm run db:seed`. Without the API, the client accepts the same listed demo
+emails/password using its local demo session. Other credentials are rejected.
+
 ---
 
 ## 🧪 Testing & Verification

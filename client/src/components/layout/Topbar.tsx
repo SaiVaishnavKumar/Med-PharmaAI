@@ -8,6 +8,7 @@ import {
   ChevronRight,
   AlertTriangle,
   CheckCircle2,
+  LogOut,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { pharmacyStore } from '../../services/pharmacyStore';
@@ -20,7 +21,7 @@ interface TopbarProps {
 export function Topbar({ onOpenMobile }: TopbarProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [search, setSearch] = useState('');
   const [showAlertsDropdown, setShowAlertsDropdown] = useState(false);
 
@@ -205,6 +206,16 @@ export function Topbar({ onOpenMobile }: TopbarProps) {
             </span>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={() => { void logout(); navigate('/login', { replace: true }); }}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-2 text-xs font-semibold text-slate-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 transition-colors"
+          aria-label="Sign out"
+          title="Sign out"
+        >
+          <LogOut className="w-4 h-4" />
+          <span className="hidden sm:inline">Sign out</span>
+        </button>
       </div>
     </header>
   );

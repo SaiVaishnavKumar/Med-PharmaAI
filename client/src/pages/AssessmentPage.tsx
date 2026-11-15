@@ -1,20 +1,11 @@
 import { useState, useEffect } from 'react';
 import {
   ShieldCheck,
-  CheckCircle2,
   FileText,
-  Boxes,
-  ShoppingCart,
-  RotateCcw,
-  BarChart3,
   ExternalLink,
-  Award,
-  Layers,
-  Terminal,
 } from 'lucide-react';
 import { pharmacyStore } from '../services/pharmacyStore';
 import { Badge } from '../components/ui/Badge';
-import { Button } from '../components/ui/Button';
 
 export function AssessmentPage() {
   const [, setTick] = useState(0);
@@ -23,7 +14,6 @@ export function AssessmentPage() {
     return pharmacyStore.subscribe(() => setTick((t) => t + 1));
   }, []);
 
-  const medicines = pharmacyStore.medicines;
   const batches = pharmacyStore.batches;
   const sales = pharmacyStore.sales;
   const movements = pharmacyStore.movements;
